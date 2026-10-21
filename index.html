@@ -1,37 +1,131 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ルーター管理画面 (おとり)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireless IP Camera Login v3.0.12</title>
+    <!-- 地図用のライブラリ (Leaflet) を読み込み -->
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <script src="https://unpkg.com"></script>
     <style>
-        body { font-family: Arial, sans-serif; background: #f0f2f5; text-align: center; padding-top: 50px; }
-        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: inline-block; width: 300px; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        button { width: 96%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .log-box { margin-top: 30px; background: #222; color: #00ff00; padding: 15px; text-align: left; width: 500px; display: inline-block; font-family: monospace; border-radius: 5px; height: 150px; overflow-y: auto; }
+        body { font-family: "Courier New", Courier, monospace; background: #121212; color: #ccc; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; max-width: 1200px; margin-top: 20px; }
+        
+        /* ログイン画面 */
+        .login-box { background: #2d2d2d; padding: 30px; border-radius: 4px; border: 1px solid #444; width: 300px; height: 350px; }
+        .brand { font-size: 18px; font-weight: bold; color: #ff9900; margin-bottom: 5px; }
+        .model { font-size: 11px; color: #888; margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        label { display: block; font-size: 11px; margin-bottom: 5px; color: #aaa; text-transform: uppercase; }
+        input { width: 90%; padding: 8px; margin-bottom: 15px; background: #111; border: 1px solid #555; color: #fff; font-family: monospace; }
+        button { width: 97%; padding: 10px; background: #ff9900; color: #111; border: none; font-weight: bold; cursor: pointer; }
+        
+        /* 地図エリア */
+        #map { width: 500px; height: 410px; border-radius: 4px; border: 1px solid #333; }
+
+        /* カウンターパネル */
+        .stats-panel { width: 100%; max-width: 1160px; display: flex; justify-content: space-around; background: #1e1e1e; padding: 15px; border-radius: 4px; border: 1px solid #333; margin-top: 20px; }
+        .stat-card { text-align: center; }
+        .stat-val { font-size: 28px; font-weight: bold; font-family: sans-serif; margin-top: 5px; }
+        .val-visit { color: #00ffff; }
+        .val-input { color: #ff9900; }
+        .val-exploit { color: #ff3333; }
+
+        /* ログストリーム */
+        .dashboard { width: 100%; max-width: 1160px; margin-top: 20px; }
+        .log-box { background: #050505; color: #00ff00; padding: 15px; font-family: monospace; font-size: 12px; border: 1px solid #222; border-radius: 4px; height: 150px; overflow-y: auto; line-height: 1.6; }
     </style>
 </head>
 <body>
 
-    <!-- 1. ハッカーを騙すための偽ログイン画面 -->
-    <div class="login-box">
-        <h2>IoT Camera Admin</h2>
-        <p style="color:red; font-size:12px;">※注意: 初期パスワードを変更してください</p>
-        <input type="text" id="username" placeholder="ユーザー名 (例: admin)">
-        <input type="password" id="password" placeholder="パスワード">
-        <button onclick="catchHacker()">ログイン</button>
+    <h2 style="color: #ff9900; margin: 0;">🛰️ CYBER THREAT REAL-TIME HONEYPOT V2</h2>
+    <p style="color: #666; margin: 5px 0 0 0; font-size: 12px;">Monitoring simulated IoT attacks across global nodes</p>
+
+    <!-- 1. 訪問・入力・侵入に分かれたカウンター -->
+    <div class="stats-panel">
+        <div class="stat-card">
+            <div>👀 TOTAL VISITS (訪問数)</div>
+            <div class="stat-val val-visit" id="cnt-visit">0</div>
+        </div>
+        <div class="stat-card">
+            <div>⌨️ ATTACK INPUTS (入力試行)</div>
+            <div class="stat-val val-input" id="cnt-input">0</div>
+        </div>
+        <div class="stat-card">
+            <div>🚨 BREACH ATTEMPTS (侵入/突破)</div>
+            <div class="stat-val val-exploit" id="cnt-exploit">0</div>
+        </div>
     </div>
 
-    <br>
+    <div class="main-layout">
+        <!-- 2. 海外製カメラっぽい偽ログイン画面 -->
+        <div class="login-box">
+            <div class="brand">LINKSYS&reg; CAMERA</div>
+            <div class="model">Firmware: v3.0.12 (Build 2018)</div>
+            
+            <label>User ID</label>
+            <input type="text" id="username" placeholder="admin">
+            
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+            
+            <button onclick="catchHacker()">Access System</button>
+            <p style="font-size: 10px; color:#ff3333; margin-top:15px; text-align:center;">⚠️ FOR OFFICIAL USE ONLY</p>
+        </div>
 
-    <!-- 2. ログをリアルタイム表示するダッシュボード -->
-    <h3>📊 おとり観察ログ (リアルタイム)</h3>
-    <div class="log-box" id="log">
-        [システム] ハニーポット起動中... 攻撃（入力）を待っています...<br>
+        <!-- 3. 世界地図を表示するエリア -->
+        <div id="map"></div>
     </div>
 
-    <!-- 3. ログを奪取して画面に表示するJavaScript -->
+    <!-- 4. ログタイムライン -->
+    <div class="dashboard">
+        <div style="font-size: 12px; color: #00ff00; margin-bottom: 5px;">[LIVE MONITORING STREAM]</div>
+        <div class="log-box" id="log">
+            [SYSTEM] Honeypot Core Initialized.<br>
+            [SYSTEM] Global IP-Geolocation Map Active.<br>
+        </div>
+    </div>
+
     <script>
+        // --- カウンターの初期値 ---
+        let visitCount = 0;
+        let inputCount = 0;
+        let exploitCount = 0;
+
+        // --- 世界地図の初期設定 ---
+        const map = L.map('map').setView([20, 0], 1); 
+        L.tileLayer('https://{s}://{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO'
+        }).addTo(map);
+
+        // ダミーの攻撃元位置データ
+        const attackers = [
+            { name: "Bot-Net (Beijing, CN)", lat: 39.9, lng: 116.4, country: "CN" },
+            { name: "Scanner (Virginia, US)", lat: 37.4, lng: -77.4, country: "US" },
+            { name: "Exploit-Node (Moscow, RU)", lat: 55.7, lng: 37.6, country: "RU" },
+            { name: "Mass-Scan (Amsterdam, NL)", lat: 52.3, lng: 4.9, country: "NL" },
+            { name: "Brute-Force (Sao Paulo, BR)", lat: -23.5, lng: -46.6, country: "BR" }
+        ];
+
+        // --- 自動訪問のシミュレーション ---
+        function simulateVisit() {
+            visitCount++;
+            document.getElementById('cnt-visit').innerText = visitCount;
+
+            const target = attackers[Math.floor(Math.random() * attackers.length)];
+            const now = new Date().toLocaleTimeString();
+            
+            L.circleMarker([target.lat, target.lng], { color: '#00ffff', radius: 6 }).addTo(map)
+                .bindPopup(`<b>${target.name}</b><br>Status: Visited`)
+                .openPopup();
+
+            document.getElementById('log').innerHTML += `[${now}] <span style="color:#00ffff;">[VISIT]</span> Web port scanned by ${target.name}<br>`;
+            scrollLog();
+            
+            setTimeout(simulateVisit, Math.random() * 15000 + 15000);
+        }
+        setTimeout(simulateVisit, 5000);
+
+        // --- パスワード入力時の仕分け機能 ---
         function catchHacker() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
@@ -39,20 +133,34 @@
 
             if (!user && !pass) return;
 
-            // 時間を取得
             const now = new Date().toLocaleTimeString();
+            inputCount++;
+            document.getElementById('cnt-input').innerText = inputCount;
 
-            // 奪い取ったパスワードをログに追記
-            logDiv.innerHTML += `[${now}] ⚠️ 侵入試行を検知！ ID: <b style="color:white">${user}</b> / PASS: <b style="color:yellow">${pass}</b><br>`;
-            
-            // 何度も試させるために、偽の「エラー」を返す
-            alert("ログインに失敗しました。ユーザー名またはパスワードが違います。");
+            const dangerPasswords = ["admin", "1234", "password", "123456", "root"];
+            let isExploit = dangerPasswords.includes(pass.toLowerCase()) || dangerPasswords.includes(user.toLowerCase());
 
-            // 入力欄をクリアして次の入力を待つ
+            if (isExploit) {
+                exploitCount++;
+                document.getElementById('cnt-exploit').innerText = exploitCount;
+                
+                logDiv.innerHTML += `[${now}] <span style="color:#ff3333; background:#400; padding:0 2px;">[CRITICAL - BREACH]</span> ⚠️ ログイン突破されました！ -> ID: <b>${user}</b> / PASS: <b style="color:yellow;">${pass}</b><br>`;
+                
+                L.circleMarker([35.6, 139.6], { color: '#ff3333', radius: 10 }).addTo(map)
+                    .bindPopup(`<b style="color:red;">BREACH DETECTED!</b><br>Used Weak Password: ${pass}`)
+                    .openPopup();
+            } else {
+                logDiv.innerHTML += `[${now}] <span style="color:#ff9900;">[INPUT TRY]</span> 認証情報を検知 (ブロック済) -> ID: ${user} / PASS: ${pass}<br>`;
+            }
+
+            alert("Error 401: Unauthorized access.");
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
-            
-            // ログを一番下にスクロール
+            scrollLog();
+        }
+
+        function scrollLog() {
+            const logDiv = document.getElementById('log');
             logDiv.scrollTop = logDiv.scrollHeight;
         }
     </script>
