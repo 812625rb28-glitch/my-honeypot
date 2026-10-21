@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ルーター管理画面 (おとり)</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; text-align: center; padding-top: 50px; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: inline-block; width: 300px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 96%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .log-box { margin-top: 30px; background: #222; color: #00ff00; padding: 15px; text-align: left; width: 500px; display: inline-block; font-family: monospace; border-radius: 5px; height: 150px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. ハッカーを騙すための偽ログイン画面 -->
+    <div class="login-box">
+        <h2>IoT Camera Admin</h2>
+        <p style="color:red; font-size:12px;">※注意: 初期パスワードを変更してください</p>
+        <input type="text" id="username" placeholder="ユーザー名 (例: admin)">
+        <input type="password" id="password" placeholder="パスワード">
+        <button onclick="catchHacker()">ログイン</button>
+    </div>
+
+    <br>
+
+    <!-- 2. ログをリアルタイム表示するダッシュボード -->
+    <h3>📊 おとり観察ログ (リアルタイム)</h3>
+    <div class="log-box" id="log">
+        [システム] ハニーポット起動中... 攻撃（入力）を待っています...<br>
+    </div>
+
+    <!-- 3. ログを奪取して画面に表示するJavaScript -->
+    <script>
+        function catchHacker() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const logDiv = document.getElementById('log');
+
+            if (!user && !pass) return;
+
+            // 時間を取得
+            const now = new Date().toLocaleTimeString();
+
+            // 奪い取ったパスワードをログに追記
+            logDiv.innerHTML += `[${now}] ⚠️ 侵入試行を検知！ ID: <b style="color:white">${user}</b> / PASS: <b style="color:yellow">${pass}</b><br>`;
+            
+            // 何度も試させるために、偽の「エラー」を返す
+            alert("ログインに失敗しました。ユーザー名またはパスワードが違います。");
+
+            // 入力欄をクリアして次の入力を待つ
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            
+            // ログを一番下にスクロール
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
